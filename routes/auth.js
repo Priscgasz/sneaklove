@@ -1,31 +1,31 @@
 const express = require("express");
 const router = new express.Router();
 module.exports = router;
-const userModel = require("./../models/User");
+const User = require("./../models/User");
 const bcrypt = require("bcrypt");
 
-router.get("/signin", (req, res) => {
-  res.render("auth/signin.hbs");
+router.get("/signin", (req, res, next) => {
+  res.render("auth/signin");
 });
-router.get("/signup", (req, res) => {
-  res.render("auth/signup.hbs");
+router.get("/signup", (req, res, next) => {
+  res.render("auth/signup");
 });
-router.get("/signout", (req,res) => {  
+router.get("/signout", (req, res, next) => {  
     req.session.destroy(function(err) {
-        res.redirect("auth/signin.hbs")
+        res.redirect("/signin")
     })
 })
-router.post("/signin", async (req,res) => {
+router.post("/signin", async (req, res, next) => {
     const { email, password } = req.body;
-    const foundUser = await userModel.findOne({ email: email });
+    const foundUser = await User.findOne({ email: email });
   if (!foundUser) {
       req.flash("error", "Invalid credentials");
-      res.redirect("/auth/signin");
+      res.redirect("/signin");
   } else {
       const isSamePassword = bcrypt.compareSync(password, foundUser.password);
       if (!isSamePassword) {
           req.flash("error", "Invalid credentials");
-          res.redirect("/auth/signin")
+          res.redirect("/signin")
       } else {
           const userObject = foundUser.toObject();
           delete userObject.password;
@@ -35,28 +35,33 @@ router.post("/signin", async (req,res) => {
       }
   }
 })
-router.post("/signup", async (req,res) => {
+router.post("/signup", async (req, res, next) => {
+
     try {
         const newUser = {...req.body};
-        console.log(req.body)
-        const foundUser = await userModel.findOne({ email: newUser.email });
+        const foundUser = await User.findOne({ email: newUser.email });
+
+console.log(newUser)
+
         if (foundUser) {
+            console.log("already found")
             req.flash("warning", "email already registered");
-            res.redirect("/auth/signup");
+            res.redirect("/signin");
         } else {
             const hashedPassword = bcrypt.hashSync(newUser.password, 10);
             newUser.password = hashedPassword;
-            const user = await userModel.create(newUser);
+            await User.create(newUser);
             req.flash("success", "Congrats ! You are now registered !")
-            res.redirect("/auth/signin")
+            res.redirect("/signin")
         }
     } catch (err) {
+        console.log("err", err)
         let errorMessage = "";
         for (field in err.errors) {
           errorMessage += err.errors[field].message + "\n";
         }
         req.flash("error", errorMessage);
-        res.redirect("/auth/signup");
+        res.redirect("/signup");
       }
 })
 module.exports = router;
