@@ -5,14 +5,14 @@ const userModel = require("./../models/User");
 const bcrypt = require("bcrypt");
 
 router.get("/signin", (req, res) => {
-  res.render("auth/signin.hbs");
+  res.render("auth/signin");
 });
 router.get("/signup", (req, res) => {
-  res.render("auth/signup.hbs");
+  res.render("auth/signup");
 });
 router.get("/signout", (req,res) => {  
     req.session.destroy(function(err) {
-        res.redirect("auth/signin.hbs")
+        res.redirect("/auth/signin")
     })
 })
 router.post("/signin", async (req,res) => {
@@ -20,12 +20,12 @@ router.post("/signin", async (req,res) => {
     const foundUser = await userModel.findOne({ email: email });
   if (!foundUser) {
       req.flash("error", "Invalid credentials");
-      res.redirect("/auth/signin");
+      res.redirect("auth/signin");
   } else {
       const isSamePassword = bcrypt.compareSync(password, foundUser.password);
       if (!isSamePassword) {
           req.flash("error", "Invalid credentials");
-          res.redirect("/auth/signin")
+          res.redirect("auth/signin")
       } else {
           const userObject = foundUser.toObject();
           delete userObject.password;

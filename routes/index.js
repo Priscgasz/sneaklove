@@ -20,11 +20,11 @@ router.get("/sneakers/:cat", (req, res, next) => {
   const cat = req.params.cat;
   if (cat === 'collection') {
     sneakerModel.find()
-    .then(sneakers => res.render('products', {sneakers}))
+    .then(sneakers => res.render('products', { sneakers }))
     .catch(next)
   } else {
-    sneakerModel.find({category: cat})
-    .then(sneakers => res.render('products', {sneakers}))
+    sneakerModel.find({ category: cat })
+    .then(sneakers => res.render('products', { sneakers }))
     .catch(next)
   }
 });
