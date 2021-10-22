@@ -64,7 +64,7 @@ const dashboardRouter = require("./routes/dashboard_sneaker");
 const authRouter = require("./routes/auth");
 
 app.use("/", indexRouter);
-app.use("/dashboard_sneaker", dashboardRouter);
+app.use("/", dashboardRouter);
 app.use("/", authRouter);
 
 // catch 404 and forward to error handler

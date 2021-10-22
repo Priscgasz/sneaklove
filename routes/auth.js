@@ -17,13 +17,16 @@ router.get("/signout", (req, res, next) => {
 })
 router.post("/signin", async (req, res, next) => {
     const { email, password } = req.body;
+    console.log(email, req.body)
     const foundUser = await User.findOne({ email: email });
+    console.log(foundUser)
   if (!foundUser) {
       req.flash("error", "Invalid credentials");
       res.redirect("/signin");
   } else {
       const isSamePassword = bcrypt.compareSync(password, foundUser.password);
       if (!isSamePassword) {
+          console.log("hello")
           req.flash("error", "Invalid credentials");
           res.redirect("/signin")
       } else {
@@ -31,7 +34,7 @@ router.post("/signin", async (req, res, next) => {
           delete userObject.password;
           req.session.currentUser = userObject;
           req.flash("success", "Successfully logged in...");
-          res.redirect("/");
+          res.redirect("/dashboard");
       }
   }
 })
