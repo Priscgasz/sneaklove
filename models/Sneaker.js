@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const sneakerSchema = new Schema(
   {
     name: String,
-    ref: Date,
+    ref: String,
     size: Number,
     description: String,
     price: Number,
@@ -16,7 +16,10 @@ const sneakerSchema = new Schema(
         type: Schema.Types.ObjectId, 
         ref: "tag" 
       }],
-      image: String
+      image: {
+        type : String,
+        default: 'https://images.theconversation.com/files/303723/original/file-20191126-180279-gvmxgl.jpg'
+      }
     }
   )
 
